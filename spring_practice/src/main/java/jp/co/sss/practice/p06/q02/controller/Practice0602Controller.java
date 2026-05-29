@@ -1,5 +1,36 @@
 package jp.co.sss.practice.p06.q02.controller;
 
-public class Practice0602Controller {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import jp.co.sss.practice.p06.entity.Area;
+import jp.co.sss.practice.p06.repository.AreaRepository;
+import jp.co.sss.practice.p06.repository.FruitsAreaRepository;
+
+@Controller
+public class Practice0602Controller {
+	@Autowired
+	AreaRepository areaRepository;
+
+	@Autowired
+	FruitsAreaRepository fruitsAreaRepository;
+
+	@RequestMapping(path = "/fruits/select/area", method = RequestMethod.GET)
+	public String select(Model model) {
+		model.addAttribute("area", areaRepository.findAllByOrderByAreaId());
+		return "practice06/02/area_select";
+	}
+
+	@RequestMapping(path = "/fruits/select/area/result", method = RequestMethod.GET)
+	public String result(Integer areaId, Model model) {
+		Area area = areaRepository.getReferenceById(areaId);
+
+		model.addAttribute("areaName", area.getAreaName());
+		model.addAttribute("fruits", fruitsAreaRepository.findByAreaOrderByFruitIdAsc(area));
+
+		return "practice06/02/fruits_list";
+	}
 }
